@@ -1,0 +1,22 @@
+﻿@namespace WebApp.Components
+
+<div @attributes="@InputAttributes">
+    <div class="card w-100 h-100" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">@(Value ?? "XX")</h5>
+            <p class="card-text">@Label</p>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+}

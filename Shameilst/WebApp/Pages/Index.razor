@@ -1,5 +1,35 @@
 ﻿@page "/"
+@using WebApp.Data.Services.Overview
+@inject OverviewDataProvider DataProvider
+<AuthorizeView>
+    <Authorized>
+        <div class="row">
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.TasksDueTodayCount.ToString()" Label="Due today"></Card>
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.TasksOverdueCount.ToString()" Label="Overdue tasks"></Card>
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.ShameRatioValue.ToString()" Label="% of shame"></Card>
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.Progression.ToString()" Label="shame evolution"></Card>
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.TotalListsCount.ToString()" Label="Total lists"></Card>
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.TotalOpenTasksCount.ToString()" Label="Total tasks"></Card>
+            <Card class="col-6 col-lg-4" Value="@_overviewModel?.ListsSharedWithThisUserCount.ToString()" Label="Shared with me"></Card>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        You need to log-in
+    </NotAuthorized>
+</AuthorizeView>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@code
+{
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private OverviewModel _overviewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthenticationStateTask).User;
+        if(user.Identity.IsAuthenticated)
+            _overviewModel = await DataProvider.Get(user);
+    }
+}
