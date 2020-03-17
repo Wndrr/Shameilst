@@ -1,0 +1,66 @@
+﻿@page "/Task/{TaskId:int}"
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using WebApp.Data.Services.Task
+@using WebApp.Data.Services.TaskListDataProvider
+@inject TaskDataProvider DataProvider
+
+<h1>
+    List @(_task?.Name ?? "XXX")
+</h1>
+
+@if (_task == null)
+{
+    <div>
+        This task could not be found
+    </div>
+}
+else
+{
+    <EditForm OnValidSubmit="@Update" Model="@_task">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <InputText @bind-Value="@_task.Name"/>
+        <InputDate @bind-Value="@_task.DueDate"/>
+        <InputCheckbox @bind-Value="@_task.IsClosed"/>
+        <button class="btn btn-primary" type="submit">Update</button>
+    </EditForm>
+
+    <button class="btn btn-danger" @onclick="@Remove">Remove</button>
+}
+
+@code
+{
+    [Parameter]
+    public int TaskId { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private TaskForUserModel _task;
+    private async Task<ClaimsPrincipal> GetUser() => (await AuthenticationStateTask).User;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    private async Task Remove()
+    {
+        await DataProvider.Remove(await GetUser(), TaskId);
+        await Refresh();
+    }
+
+    private async Task Update()
+    {
+        await DataProvider.Update(await GetUser(), TaskId, _task);
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        var user = await GetUser();
+        if (user.Identity.IsAuthenticated)
+            _task = await DataProvider.Get(user, TaskId);
+    }
+}

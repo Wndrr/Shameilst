@@ -8,7 +8,7 @@ using WebApp.Data.Entities;
 
 namespace WebApp.Data.Services.Overview
 {
-    public class OverviewDataProvider : BaseDataProvider<OverviewModel>
+    public class OverviewDataProvider : BaseDataProvider
     {
 
 
@@ -16,7 +16,7 @@ namespace WebApp.Data.Services.Overview
         {
         }
 
-        public override async Task<OverviewModel> Get(ClaimsPrincipal claimsPrincipal)
+        public async Task<OverviewModel> Get(ClaimsPrincipal claimsPrincipal)
         {
             var user = await GetUser(claimsPrincipal);
             var userAndRelatedEntities = await Context.Users.Include(u => u.Lists).ThenInclude(l => l.Tasks).SingleAsync(u => u.Id == user.Id);

@@ -7,13 +7,13 @@ using WebApp.Data.Entities;
 
 namespace WebApp.Data.Services.TaskLists
 {
-    public class TaskListsDataProvider : BaseDataProvider<TaskListsForUserModel>
+    public class TaskListsDataProvider : BaseDataProvider
     {
         public TaskListsDataProvider(UserManager<UserEntity> userManager, ShameilstDbContext context) : base(userManager, context)
         {
         }
 
-        public override async Task<TaskListsForUserModel> Get(ClaimsPrincipal claimsPrincipal)
+        public async Task<TaskListsForUserModel> Get(ClaimsPrincipal claimsPrincipal)
         {
             var user = await GetUser(claimsPrincipal);
             var userAndRelatedEntities = await Context.Users.Include(u => u.Lists).ThenInclude(l => l.Tasks).SingleAsync(u => u.Id == user.Id);
@@ -23,7 +23,7 @@ namespace WebApp.Data.Services.TaskLists
             return listsForUseModel;
         }
 
-        public async Task Add(ClaimsPrincipal claimsPrincipal, string name)
+        public async System.Threading.Tasks.Task Add(ClaimsPrincipal claimsPrincipal, string name)
         {
             var user = await GetUser(claimsPrincipal);
             var currentUser = await Context.Users.Include(s => s.Lists).SingleAsync(u => u.Id == user.Id);
@@ -33,7 +33,7 @@ namespace WebApp.Data.Services.TaskLists
             await Context.SaveChangesAsync();
         }
 
-        public async Task Remove(ClaimsPrincipal claimsPrincipal, int idOfListToRemove)
+        public async System.Threading.Tasks.Task Remove(ClaimsPrincipal claimsPrincipal, int idOfListToRemove)
         {
             var user = await GetUser(claimsPrincipal);
             var currentUser = await Context.Users.Include(s => s.Lists).SingleAsync(u => u.Id == user.Id);

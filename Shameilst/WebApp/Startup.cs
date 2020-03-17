@@ -17,6 +17,8 @@ using WebApp.Areas.Identity;
 using WebApp.Data;
 using WebApp.Data.Entities;
 using WebApp.Data.Services.Overview;
+using WebApp.Data.Services.Task;
+using WebApp.Data.Services.TaskListDataProvider;
 using WebApp.Data.Services.TaskLists;
 
 namespace WebApp
@@ -45,6 +47,8 @@ namespace WebApp
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<OverviewDataProvider>();
             services.AddScoped<TaskListsDataProvider>();
+            services.AddScoped<TaskListDataProvider>();
+            services.AddScoped<TaskDataProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

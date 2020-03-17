@@ -5,7 +5,7 @@ using WebApp.Data.Entities;
 
 namespace WebApp.Data.Services
 {
-    public abstract class BaseDataProvider<T>
+    public abstract class BaseDataProvider
     {
         protected readonly ShameilstDbContext Context;
         private readonly UserManager<UserEntity> _userManager;
@@ -21,7 +21,5 @@ namespace WebApp.Data.Services
             _userManager = userManager;
             Context = context;
         }
-
-        public abstract Task<T> Get(ClaimsPrincipal claimsPrincipal);
     }
 }

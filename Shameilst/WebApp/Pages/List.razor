@@ -1,0 +1,70 @@
+﻿@page "/List/{ListId:int}"
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using WebApp.Data.Services.TaskListDataProvider
+@inject TaskListDataProvider DataProvider
+
+<h1>
+    List @(_taskList?.Name ?? "XXX")
+</h1>
+<EditForm OnValidSubmit="@Add" Model="@_taskCreationEditModel">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <InputText @bind-Value="@_taskCreationEditModel.Name"/>
+    <button class="btn btn-primary" type="submit">Add list</button>
+</EditForm>
+@if (_taskList?.Tasks != null && _taskList.Tasks.Any())
+{
+    @foreach (var task in _taskList.Tasks)
+    {
+        <div>
+            <a href="Task/@task.Id">@task.Name</a> due in @task.DueDate.Subtract(DateTime.Now).ToString()
+            <button class="btn btn-danger" @onclick="@(async () => await Remove(task.Id))">Remove</button>
+        </div>
+    }
+}
+
+@code
+{
+    [Parameter]
+    public int ListId { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private TaskListForUserModel _taskList;
+    private async Task<ClaimsPrincipal> GetUser() => (await AuthenticationStateTask).User;
+
+    private readonly TaskCreationEditModel _taskCreationEditModel = new TaskCreationEditModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    private async Task Add()
+    {
+        await DataProvider.Add(await GetUser(), ListId, _taskCreationEditModel.Name);
+        await Refresh();
+        _taskCreationEditModel.Name = null;
+    }
+
+    private async Task Remove(int idOfListToRemove)
+    {
+        await DataProvider.Remove(await GetUser(), ListId, idOfListToRemove);
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        var user = await GetUser();
+        if (user.Identity.IsAuthenticated)
+            _taskList = await DataProvider.Get(user, ListId);
+    }
+
+    private class TaskCreationEditModel
+    {
+        [Required]
+        public string Name { get; set; }
+    }
+}
