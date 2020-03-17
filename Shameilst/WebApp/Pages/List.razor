@@ -8,10 +8,10 @@
     List @(_taskList?.Name ?? "XXX")
 </h1>
 <EditForm OnValidSubmit="@Add" Model="@_taskCreationEditModel">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
     <InputText @bind-Value="@_taskCreationEditModel.Name"/>
     <button class="btn btn-primary" type="submit">Add list</button>
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
 </EditForm>
 @if (_taskList?.Tasks != null && _taskList.Tasks.Any())
 {

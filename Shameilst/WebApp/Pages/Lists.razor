@@ -9,10 +9,10 @@
     TASKS LISTS YAY
 </h1>
 <EditForm OnValidSubmit="@Add" Model="@_taskListCreationEditModel">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
     <InputText @bind-Value="@_taskListCreationEditModel.Name" />
     <button class="btn btn-primary" type="submit">Add list</button>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 </EditForm>
 @if (_taskLists?.Lists != null && _taskLists.Lists.Any())
 {
