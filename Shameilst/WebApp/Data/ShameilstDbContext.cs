@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ShameilstDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ShameilstDbContext(DbContextOptions<ShameilstDbContext> options)
             : base(options)
         {
         }
