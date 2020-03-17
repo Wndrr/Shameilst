@@ -15,6 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebApp.Areas.Identity;
 using WebApp.Data;
+using WebApp.Data.Entities;
+using WebApp.Data.Services.Overview;
+using WebApp.Data.Services.TaskLists;
 
 namespace WebApp
 {
@@ -34,12 +37,14 @@ namespace WebApp
             services.AddDbContext<ShameilstDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<UserEntity>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ShameilstDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<UserEntity>>();
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<OverviewDataProvider>();
+            services.AddScoped<TaskListsDataProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

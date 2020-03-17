@@ -1,0 +1,66 @@
+﻿@page "/Lists"
+@using System.Security.Claims
+@using WebApp.Data.Services.Overview
+@using WebApp.Data.Services.TaskLists
+@inject TaskListsDataProvider DataProvider
+
+<h1>
+    TASKS LISTS YAY
+</h1>
+<EditForm OnValidSubmit="@AddList" Model="@_taskListCreationEditModel">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <InputText @bind-Value="@_taskListCreationEditModel.Name" />
+    <button class="btn btn-primary" type="submit">Add list</button>
+</EditForm>
+@if (_taskLists?.Lists != null && _taskLists.Lists.Any())
+{
+    @foreach (var list in _taskLists.Lists)
+    {
+        <div>
+            <span>@list.Name</span>
+            <button class="btn btn-danger" @onclick="@(async () => await RemoveList(list.Id))">Remove</button>
+        </div>
+    }
+}
+
+@code
+{
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private TaskListsForUserModel _taskLists;
+    private async Task<ClaimsPrincipal> GetUser() => (await AuthenticationStateTask).User;
+
+    private readonly TaskListCreationEditModel _taskListCreationEditModel = new TaskListCreationEditModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateTasksList();
+    }
+
+    private async Task AddList()
+    {
+        await DataProvider.Add(await GetUser(), _taskListCreationEditModel.Name);
+        await UpdateTasksList();
+        _taskListCreationEditModel.Name = null;
+    }
+
+    private async Task RemoveList(int idOfListToRemove)
+    {
+        await DataProvider.Remove(await GetUser(), idOfListToRemove);
+        await UpdateTasksList();
+    }
+
+    private async Task UpdateTasksList()
+    {
+        var user = await GetUser();
+        if (user.Identity.IsAuthenticated)
+            _taskLists = await DataProvider.Get(user);
+    }
+
+    private class TaskListCreationEditModel
+    {
+        public string Name { get; set; }
+    }
+}
