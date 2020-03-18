@@ -32,7 +32,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: success()
+    needs: build
 
     steps:
     - name: executing remote ssh commands using password
