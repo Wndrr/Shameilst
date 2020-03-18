@@ -28,7 +28,23 @@
                 {
                     <text>task.Name</text>
                 }
-            </a> due in @task.DueDate.Subtract(DateTime.Now).ToString()
+            </a> 
+            @{
+                var dueTimeSpan = task.DueDate.Subtract(DateTime.Now);
+                var dayTextValue = $"{dueTimeSpan:%d} day(s)";
+            }
+@if (dueTimeSpan.Days == 0)
+{
+    <span>due today</span>
+}
+else if (dueTimeSpan.Days > 0)
+{
+    <span>due in @dayTextValue</span>
+}
+else
+{
+    <span>due @dayTextValue ago</span>
+}
             <button class="btn btn-danger" @onclick="@(async () => await Remove(task.Id))">Remove</button>
         </div>
     }
