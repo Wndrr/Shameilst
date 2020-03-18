@@ -9,7 +9,7 @@
     List @(_task?.Name ?? "XXX")
 </h1>
 
-<a class="btn btn-primary" href="List/@_task?.ParentListId">Return to lists</a>
+<a class="btn btn-primary" href="List/@_task?.ParentListId">Return to list @_task?.ParentListName</a>
 
 @if (_task == null)
 {

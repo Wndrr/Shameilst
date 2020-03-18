@@ -13,17 +13,16 @@ namespace WebApp.Data.Services.Task
             DueDate = entity.DueDate;
             IsClosed = entity.IsClosed;
             ParentListId = entity.ParentList.Id;
+            ParentListName = entity.ParentList.Name;
         }
 
+
         public int Id { get; set; }
-        
         [Required]
         public string Name { get; set; }
-        
         public DateTime DueDate { get; set; }
-        
         public bool IsClosed { get; set; }
-        
         public int ParentListId { get; set; }
+        public string ParentListName { get; set; }
     }
 }
