@@ -22,9 +22,18 @@ else
     <EditForm OnValidSubmit="@Update" Model="@_task">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
-        <InputText @bind-Value="@_task.Name"/>
-        <InputDate @bind-Value="@_task.DueDate"/>
-        <InputCheckbox @bind-Value="@_task.IsClosed"/>
+        <div class="form-group">
+            <label>@nameof(TaskForUserModel.Name)</label>
+            <InputText @bind-Value="@_task.Name" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label>@nameof(TaskForUserModel.DueDate)</label>
+            <InputDate @bind-Value="@_task.DueDate" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label>@nameof(TaskForUserModel.IsClosed)</label>
+            <InputCheckbox @bind-Value="@_task.IsClosed" class="form-control"/>
+        </div>
         <button class="btn btn-primary" type="submit">Update</button>
     </EditForm>
 

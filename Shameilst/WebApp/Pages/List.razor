@@ -9,7 +9,10 @@
 </h1>
 <a class="btn btn-primary" href="Lists">Return to lists</a>
 <EditForm OnValidSubmit="@Add" Model="@_taskCreationEditModel">
-    <InputText @bind-Value="@_taskCreationEditModel.Name"/>
+    <div class="form-group">
+        <label>@nameof(TaskCreationEditModel.Name)</label>
+        <InputText @bind-Value="@_taskCreationEditModel.Name" class="form-control"/>
+    </div>
     <button class="btn btn-primary" type="submit">Add list</button>
     <DataAnnotationsValidator/>
     <ValidationSummary/>
@@ -26,25 +29,25 @@
                 }
                 else
                 {
-                    <text>task.Name</text>
+                    <text>@task.Name</text>
                 }
-            </a> 
+            </a>
             @{
                 var dueTimeSpan = task.DueDate.Subtract(DateTime.Now);
                 var dayTextValue = $"{dueTimeSpan:%d} day(s)";
             }
-@if (dueTimeSpan.Days == 0)
-{
-    <span>due today</span>
-}
-else if (dueTimeSpan.Days > 0)
-{
-    <span>due in @dayTextValue</span>
-}
-else
-{
-    <span>due @dayTextValue ago</span>
-}
+            @if (dueTimeSpan.Days == 0)
+            {
+                <span>due today</span>
+            }
+            else if (dueTimeSpan.Days > 0)
+            {
+                <span>due in @dayTextValue</span>
+            }
+            else
+            {
+                <span>due @dayTextValue ago</span>
+            }
             <button class="btn btn-danger" @onclick="@(async () => await Remove(task.Id))">Remove</button>
         </div>
     }
@@ -94,4 +97,3 @@ else
         public string Name { get; set; }
     }
 }
-
