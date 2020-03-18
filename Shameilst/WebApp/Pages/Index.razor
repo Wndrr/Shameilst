@@ -1,6 +1,9 @@
 ﻿@page "/"
 @using WebApp.Data.Services.Overview
 @inject OverviewDataProvider DataProvider
+@inherits WebApp.Services.UiMessaginReadyComponent
+
+<UiMessageDisplayer />
 
 <AuthorizeView>
     <Authorized>
