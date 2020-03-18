@@ -16,10 +16,19 @@
 </EditForm>
 @if (_taskList?.Tasks != null && _taskList.Tasks.Any())
 {
-    @foreach (var task in _taskList.Tasks)
+    @foreach (var task in _taskList.Tasks.OrderBy(t => t.IsClosed))
     {
         <div>
-            <a href="Task/@task.Id">@task.Name</a> due in @task.DueDate.Subtract(DateTime.Now).ToString()
+            <a href="Task/@task.Id">
+                @if (task.IsClosed)
+                {
+                    <del>@task.Name</del>
+                }
+                else
+                {
+                    <text>task.Name</text>
+                }
+            </a> due in @task.DueDate.Subtract(DateTime.Now).ToString()
             <button class="btn btn-danger" @onclick="@(async () => await Remove(task.Id))">Remove</button>
         </div>
     }
@@ -69,3 +78,4 @@
         public string Name { get; set; }
     }
 }
+
