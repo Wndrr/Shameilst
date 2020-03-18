@@ -7,6 +7,7 @@
 <h1>
     List @(_taskList?.Name ?? "XXX")
 </h1>
+<a class="btn btn-primary" href="Lists">Return to lists</a>
 <EditForm OnValidSubmit="@Add" Model="@_taskCreationEditModel">
     <InputText @bind-Value="@_taskCreationEditModel.Name"/>
     <button class="btn btn-primary" type="submit">Add list</button>

@@ -17,7 +17,7 @@ namespace WebApp.Data.Services.Task
         public async Task<TaskForUserModel> Get(ClaimsPrincipal claimsPrincipal, int taskId)
         {
             var user = await GetUser(claimsPrincipal);
-            var userAndRelatedEntities = await Context.Users.Include(u => u.Lists).ThenInclude(l => l.Tasks).SingleAsync(u => u.Id == user.Id);
+            var userAndRelatedEntities = await Context.Users.Include(u => u.Lists).ThenInclude(l => l.Tasks).ThenInclude(l => l.ParentList).SingleAsync(u => u.Id == user.Id);
             var task = userAndRelatedEntities.Lists.SelectMany(l => l.Tasks).Single(l => l.Id == taskId);
             
             var listsForUseModel = new TaskForUserModel(task);
