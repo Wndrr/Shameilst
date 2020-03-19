@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp.Data;
 
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ShameilstDbContext))]
-    partial class ShameilstDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200318234321_RemoveCascadingDelete")]
+    partial class RemoveCascadingDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,14 +175,9 @@ namespace WebApp.Migrations
                     b.Property<int?>("ParentListId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TaskListEntityId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ParentListId");
-
-                    b.HasIndex("TaskListEntityId");
 
                     b.ToTable("Tasks");
                 });
@@ -330,13 +327,8 @@ namespace WebApp.Migrations
             modelBuilder.Entity("WebApp.Data.Entities.TaskEntity", b =>
                 {
                     b.HasOne("WebApp.Data.Entities.TaskListEntity", "ParentList")
-                        .WithMany()
-                        .HasForeignKey("ParentListId");
-
-                    b.HasOne("WebApp.Data.Entities.TaskListEntity", null)
                         .WithMany("Tasks")
-                        .HasForeignKey("TaskListEntityId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ParentListId");
                 });
 
             modelBuilder.Entity("WebApp.Data.Entities.TaskListEntity", b =>

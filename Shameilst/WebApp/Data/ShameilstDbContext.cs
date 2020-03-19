@@ -12,7 +12,6 @@ namespace WebApp.Data
         public ShameilstDbContext(DbContextOptions options)
             : base(options)
         {
-            
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -57,8 +57,10 @@ namespace WebApp.Data.Services.TaskLists
             try
             {
                 var user = await GetUser(claimsPrincipal);
-                var currentUser = await Context.Users.Include(s => s.Lists).SingleAsync(u => u.Id == user.Id);
-                currentUser.Lists.RemoveAll(r => r.Id == idOfListToRemove);
+                var currentUser = await Context.Users.Include(s => s.Lists).ThenInclude(l => l.Tasks).ThenInclude(l => l.ParentList).SingleAsync(u => u.Id == user.Id);
+                
+                RemoveChildrenTasks(idOfListToRemove);
+                RemoveList(idOfListToRemove, currentUser);
                 await Context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -66,6 +68,17 @@ namespace WebApp.Data.Services.TaskLists
                 Console.WriteLine(e);
                 UiMessagingPipeline.AddUiMessageForUser(claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier), new UiMessage("An error occured"));
             }
+        }
+
+        private static void RemoveList(int idOfListToRemove, UserEntity currentUser)
+        {
+            currentUser.Lists.RemoveAll(r => r.Id == idOfListToRemove);
+        }
+
+        private void RemoveChildrenTasks(int idOfListToRemove)
+        {
+            var childrenTasks = Context.Tasks.Include(t => t.ParentList).Where(t => t.ParentList.Id == idOfListToRemove);
+            Context.Tasks.RemoveRange(childrenTasks);
         }
     }
 }
