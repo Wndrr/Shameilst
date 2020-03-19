@@ -17,6 +17,7 @@ namespace WebApp.Data.Entities
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public int PrideShameValue { get; set; }
         
         public virtual TaskListEntity ParentList { get; set; }
         public DateTime DueDate { get; set; } = DateTime.Now;
@@ -28,6 +29,7 @@ namespace WebApp.Data.Entities
             Name = model.Name;
             DueDate = model.DueDate;
             IsClosed = model.IsClosed;
+            PrideShameValue = model.PrideShameValue;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace WebApp.Data.Services.Task
             IsClosed = entity.IsClosed;
             ParentListId = entity.ParentList.Id;
             ParentListName = entity.ParentList.Name;
+            PrideShameValue = entity.PrideShameValue;
         }
 
 
@@ -23,6 +24,7 @@ namespace WebApp.Data.Services.Task
         public DateTime DueDate { get; set; }
         public bool IsClosed { get; set; }
         public int ParentListId { get; set; }
+        public int PrideShameValue { get; set; }
         public string ParentListName { get; set; }
     }
 }

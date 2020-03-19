@@ -91,14 +91,25 @@ namespace WebApp.Data.Services.Task
             }
         }
 
-        public async System.Threading.Tasks.Task Update(ClaimsPrincipal claimsPrincipal, int idOfTaskToRemove, TaskForUserModel model)
+        public async System.Threading.Tasks.Task Update(ClaimsPrincipal claimsPrincipal, int idOfTaskToRemove, TaskForUserModel model, bool isUpdatedBySharee)
         {
             try
             {
                 var user = await GetUser(claimsPrincipal);
-                var currentUser = await Context.Users.Include(s => s.Lists).SingleAsync(u => u.Id == user.Id);
-                var task = currentUser.Lists.SelectMany(l => l.Tasks).Single(l => l.Id == idOfTaskToRemove);
-                task.Update(model);
+                if (isUpdatedBySharee)
+                {
+                    var currentUser = await Context.Users
+                        .Include(s => s.ListsSharedWithThisUser).ThenInclude(l => l.List).ThenInclude(l => l.Tasks)
+                        .SingleAsync(u => u.Id == user.Id);
+                    var task = currentUser.ListsSharedWithThisUser.SelectMany(l => l.List.Tasks).Single(l => l.Id == idOfTaskToRemove);
+                    task.Update(model);
+                }
+                else
+                {
+                    var currentUser = await Context.Users.Include(s => s.Lists).SingleAsync(u => u.Id == user.Id);
+                    var task = currentUser.Lists.SelectMany(l => l.Tasks).Single(l => l.Id == idOfTaskToRemove);
+                    task.Update(model);
+                }
                 await Context.SaveChangesAsync();
             }
             catch (Exception e)

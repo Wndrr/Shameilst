@@ -56,13 +56,23 @@ else
                 <ValidationMessage For="@(() => _task.IsClosed)"/>
             </div>
         </div>
-        @if (!_isReadonly)
-        {
-            <div class="col-lg-12">
-                <button class="btn btn-primary mx-auto" type="submit">Update task !</button>
-                <button class="btn btn-danger mx-auto" type="button" @onclick="@Remove"><span class="oi oi-delete"></span> Remove</button>
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label>@nameof(TaskForUserModel.PrideShameValue)</label>
+                    <InputNumber @bind-Value="@_task.PrideShameValue" class="form-control" disabled="@(!_isReadonly)"/>
+                </div>
+                <div class="col-lg-6">
+                    <br/>
+                    <ValidationMessage For="@(() => _task.PrideShameValue)"/>
+                </div>
             </div>
-        }
+        <div class="col-lg-12">
+            <button class="btn btn-primary mx-auto" type="submit">Update task !</button>
+            @if (!_isReadonly)
+            {
+                <button class="btn btn-danger mx-auto" type="button" @onclick="@Remove"><span class="oi oi-delete"></span> Remove</button>
+            }
+        </div>
     </EditForm>
 }
 
@@ -91,7 +101,10 @@ else
 
     private async Task Update()
     {
-        await DataProvider.Update(await GetUser(), TaskId, _task);
+        var user = await GetUser();
+        var parentListId = await DataProvider.GetParentListIdForTask(user, TaskId);
+        var isUpdatedBySharee = !(await TaskListDataProvider.UserOwnsThisList(user, parentListId));
+        await DataProvider.Update(user, TaskId, _task, isUpdatedBySharee);
         await Refresh();
     }
 
@@ -115,3 +128,4 @@ else
         }
     }
 }
+
