@@ -19,7 +19,7 @@ namespace WebApp.Data.Entities
         public string Name { get; set; }
         
         public virtual UserEntity Owner { get; set; }
-        public virtual List<UserEntity> Sharees { get; set; } = new List<UserEntity>();
+        public virtual List<ListShareeMappingEntity> Sharees { get; set; } = new List<ListShareeMappingEntity>();
         public virtual List<TaskEntity> Tasks { get; set; } = new List<TaskEntity>();
     }
 }

@@ -16,6 +16,23 @@ namespace WebApp.Data.Services.Task
         {
         }
 
+        public async Task<int> GetParentListIdForTask(ClaimsPrincipal claimsPrincipal, int taskId)
+        {
+            try
+            {
+                var task = await Context.Tasks.Include(i => i.ParentList).SingleAsync(t => t.Id == taskId);
+                var parentListId = task.ParentList.Id;
+
+                return parentListId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                UiMessagingPipeline.AddUiMessageForUser(claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier), new UiMessage("An error occured"));
+                return -1;
+            }
+        }
+
         public async Task<TaskForUserModel> Get(ClaimsPrincipal claimsPrincipal, int taskId)
         {
             try
@@ -23,6 +40,26 @@ namespace WebApp.Data.Services.Task
                 var user = await GetUser(claimsPrincipal);
                 var userAndRelatedEntities = await Context.Users.Include(u => u.Lists).ThenInclude(l => l.Tasks).ThenInclude(l => l.ParentList).SingleAsync(u => u.Id == user.Id);
                 var task = userAndRelatedEntities.Lists.SelectMany(l => l.Tasks).Single(l => l.Id == taskId);
+
+                var listsForUseModel = new TaskForUserModel(task);
+
+                return listsForUseModel;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                UiMessagingPipeline.AddUiMessageForUser(claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier), new UiMessage("An error occured"));
+                return null;
+            }
+        }
+        
+        public async Task<TaskForUserModel> GetShared(ClaimsPrincipal claimsPrincipal, int taskId)
+        {
+            try
+            {
+                var user = await GetUser(claimsPrincipal);
+                var userAndRelatedEntities = await Context.Users.Include(u => u.ListsSharedWithThisUser).ThenInclude(l => l.List).ThenInclude(l => l.Tasks).SingleAsync(u => u.Id == user.Id);
+                var task = userAndRelatedEntities.ListsSharedWithThisUser.SelectMany(l => l.List.Tasks).Single(l => l.Id == taskId);
 
                 var listsForUseModel = new TaskForUserModel(task);
 

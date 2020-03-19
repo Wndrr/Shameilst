@@ -6,8 +6,9 @@
 @using WebApp.Data.Services.TaskListDataProvider
 @inject NavigationManager NavigationManager
 @inject TaskDataProvider DataProvider
+@inject TaskListDataProvider TaskListDataProvider
 
-<UiMessageDisplayer />
+<UiMessageDisplayer/>
 
 <h1 class="text-center">
     @(_task?.Name ?? "XXX")
@@ -28,7 +29,7 @@ else
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>@nameof(TaskForUserModel.Name)</label>
-                <InputText @bind-Value="@_task.Name" class="form-control"/>
+                <InputText @bind-Value="@_task.Name" class="form-control" disabled="@_isReadonly"/>
             </div>
             <div class="col-lg-6">
                 <br/>
@@ -38,7 +39,7 @@ else
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>@nameof(TaskForUserModel.DueDate)</label>
-                <InputDate @bind-Value="@_task.DueDate" class="form-control"/>
+                <InputDate @bind-Value="@_task.DueDate" class="form-control" disabled="@_isReadonly"/>
             </div>
             <div class="col-lg-6">
                 <br/>
@@ -48,17 +49,20 @@ else
         <div class="row">
             <div class="form-group col-lg-6">
                 <label>@nameof(TaskForUserModel.IsClosed)</label>
-                <InputCheckbox @bind-Value="@_task.IsClosed" class="form-control"/>
+                <InputCheckbox @bind-Value="@_task.IsClosed" class="form-control" disabled="@_isReadonly"/>
             </div>
             <div class="col-lg-6">
                 <br/>
                 <ValidationMessage For="@(() => _task.IsClosed)"/>
             </div>
         </div>
-        <div class="col-lg-12">
-            <button class="btn btn-primary mx-auto" type="submit">Update task !</button>
-            <button class="btn btn-danger mx-auto" type="button" @onclick="@Remove"><span class="oi oi-delete"></span> Remove</button>
-        </div>
+        @if (!_isReadonly)
+        {
+            <div class="col-lg-12">
+                <button class="btn btn-primary mx-auto" type="submit">Update task !</button>
+                <button class="btn btn-danger mx-auto" type="button" @onclick="@Remove"><span class="oi oi-delete"></span> Remove</button>
+            </div>
+        }
     </EditForm>
 }
 
@@ -72,6 +76,7 @@ else
 
     private TaskForUserModel _task;
     private async Task<ClaimsPrincipal> GetUser() => (await AuthenticationStateTask).User;
+    private bool _isReadonly;
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,6 +99,19 @@ else
     {
         var user = await GetUser();
         if (user.Identity.IsAuthenticated)
-            _task = await DataProvider.Get(user, TaskId);
+        {
+            var parentListId = await DataProvider.GetParentListIdForTask(user, TaskId);
+            var userOwnsThisList = await TaskListDataProvider.UserOwnsThisList(user, parentListId);
+
+            if (userOwnsThisList)
+            {
+                _task = await DataProvider.Get(user, TaskId);
+            }
+            else
+            {
+                _isReadonly = true;
+                _task = await DataProvider.GetShared(user, TaskId);
+            }
+        }
     }
 }

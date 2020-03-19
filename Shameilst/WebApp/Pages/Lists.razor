@@ -5,7 +5,7 @@
 @using WebApp.Data.Services.TaskLists
 @inject TaskListsDataProvider DataProvider
 
-<UiMessageDisplayer />
+<UiMessageDisplayer/>
 
 <h1 class="text-center">
     Your lists
@@ -26,11 +26,11 @@
     </div>
     <DataAnnotationsValidator/>
 </EditForm>
-@if (_taskLists?.Lists != null && _taskLists.Lists.Any())
+@if (_taskLists?.ListsOwnedByThisUser != null && _taskLists.ListsOwnedByThisUser.Any())
 {
     <table class="table mt-4 col-lg-8 mx-auto">
         <tbody>
-        @foreach (var list in _taskLists.Lists)
+        @foreach (var list in _taskLists.ListsOwnedByThisUser)
         {
             <tr>
                 <td>
@@ -41,6 +41,31 @@
                 </td>
                 <td>
                     Shared with @list.ShareesCount <span class="oi oi-person"></span>
+                </td>
+                <td>
+                    <span class="oi oi-delete" @onclick="@(async () => await Remove(list.Id))"></span>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if (_taskLists?.ListsSharedWithThisUser != null && _taskLists.ListsSharedWithThisUser.Any())
+{
+    <h1 class="text-center">
+        Lists shared with you
+    </h1>
+    <table class="table mt-4 col-lg-8 mx-auto">
+        <tbody>
+        @foreach (var list in _taskLists.ListsSharedWithThisUser)
+        {
+            <tr>
+                <td>
+                    <a href="List/@list.Id">@list.Name</a>
+                </td>
+                <td>
+                    @list.OpenTasksCount open tasks out of @list.TotalTasksCount total
                 </td>
                 <td>
                     <span class="oi oi-delete" @onclick="@(async () => await Remove(list.Id))"></span>

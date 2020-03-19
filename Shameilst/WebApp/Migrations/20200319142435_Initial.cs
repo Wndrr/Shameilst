@@ -152,6 +152,70 @@ namespace WebApp.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Lists",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    OwnerId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lists_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ListShareeMappingEntity",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    ListId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListShareeMappingEntity", x => new { x.ListId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_ListShareeMappingEntity_Lists_ListId",
+                        column: x => x.ListId,
+                        principalTable: "Lists",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ListShareeMappingEntity_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TaskEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    ParentListId = table.Column<int>(nullable: true),
+                    DueDate = table.Column<DateTime>(nullable: false),
+                    IsClosed = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TaskEntity_Lists_ParentListId",
+                        column: x => x.ParentListId,
+                        principalTable: "Lists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -190,6 +254,21 @@ namespace WebApp.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lists_OwnerId",
+                table: "Lists",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ListShareeMappingEntity_UserId",
+                table: "ListShareeMappingEntity",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskEntity_ParentListId",
+                table: "TaskEntity",
+                column: "ParentListId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -210,7 +289,16 @@ namespace WebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ListShareeMappingEntity");
+
+            migrationBuilder.DropTable(
+                name: "TaskEntity");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Lists");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

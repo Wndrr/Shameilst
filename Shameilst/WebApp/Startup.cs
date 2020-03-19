@@ -20,6 +20,7 @@ using WebApp.Data.Services.Overview;
 using WebApp.Data.Services.Task;
 using WebApp.Data.Services.TaskListDataProvider;
 using WebApp.Data.Services.TaskLists;
+using WebApp.Data.Services.Users;
 using WebApp.Services;
 
 namespace WebApp
@@ -51,6 +52,7 @@ namespace WebApp
             services.AddScoped<TaskListDataProvider>();
             services.AddScoped<TaskDataProvider>();
             services.AddSingleton<UiMessagingPipeline>();
+            services.AddScoped<UsersDataProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

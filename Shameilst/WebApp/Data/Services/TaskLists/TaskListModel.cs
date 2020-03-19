@@ -19,4 +19,18 @@ namespace WebApp.Data.Services.TaskLists
         public int OpenTasksCount { get; set; }
         public int ShareesCount { get; set; }
     }
+    public class SharedTaskListModel
+    {
+        public SharedTaskListModel(TaskListEntity taskListEntity)
+        {
+            Id = taskListEntity.Id;
+            Name = taskListEntity.Name;
+            TotalTasksCount = taskListEntity.Tasks?.Count() ?? 0;
+            OpenTasksCount = taskListEntity.Tasks?.Count(t => !t.IsClosed) ?? 0;
+        }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int TotalTasksCount { get; set; }
+        public int OpenTasksCount { get; set; }
+    }
 }

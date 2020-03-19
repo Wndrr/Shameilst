@@ -20,7 +20,10 @@ namespace WebApp.Data.Services.Overview
             try
             {
                 var user = await GetUser(claimsPrincipal);
-                var userAndRelatedEntities = await Context.Users.Include(u => u.Lists).ThenInclude(l => l.Tasks).SingleAsync(u => u.Id == user.Id);
+                var userAndRelatedEntities = await Context.Users
+                    .Include(u => u.Lists).ThenInclude(l => l.Tasks)
+                    .Include(u => u.ListsSharedWithThisUser)
+                    .SingleAsync(u => u.Id == user.Id);
 
                 var overviewData = new OverviewModel(userAndRelatedEntities);
                 return overviewData;

@@ -14,7 +14,7 @@ namespace WebApp.Data.Services.Overview
             TasksOverdueCount = tasks.Count(t => t.DueDate < DateTime.Today  && !t.IsClosed);
             TotalListsCount = userAndRelatedEntities.Lists.Count();
             TotalOpenTasksCount = tasks.Count(t => !t.IsClosed);
-            ListsSharedWithThisUserCount = userAndRelatedEntities.Lists.Count(l => l.Sharees.Select(s => s.Id).Contains(userAndRelatedEntities.Id));
+            ListsSharedWithThisUserCount = userAndRelatedEntities.ListsSharedWithThisUser.Count();
         }
 
         public int TasksDueTodayCount { get; set; }

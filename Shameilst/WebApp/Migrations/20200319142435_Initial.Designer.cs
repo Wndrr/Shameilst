@@ -10,8 +10,8 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ShameilstDbContext))]
-    [Migration("20200318234321_RemoveCascadingDelete")]
-    partial class RemoveCascadingDelete
+    [Migration("20200319142435_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -156,6 +156,21 @@ namespace WebApp.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("WebApp.Data.Entities.ListShareeMappingEntity", b =>
+                {
+                    b.Property<int>("ListId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ListId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ListShareeMappingEntity");
+                });
+
             modelBuilder.Entity("WebApp.Data.Entities.TaskEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -179,7 +194,7 @@ namespace WebApp.Migrations
 
                     b.HasIndex("ParentListId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("TaskEntity");
                 });
 
             modelBuilder.Entity("WebApp.Data.Entities.TaskListEntity", b =>
@@ -248,9 +263,6 @@ namespace WebApp.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TaskListEntityId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -267,8 +279,6 @@ namespace WebApp.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("TaskListEntityId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -324,6 +334,20 @@ namespace WebApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebApp.Data.Entities.ListShareeMappingEntity", b =>
+                {
+                    b.HasOne("WebApp.Data.Entities.TaskListEntity", "List")
+                        .WithMany("Sharees")
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("WebApp.Data.Entities.UserEntity", "User")
+                        .WithMany("ListsSharedWithThisUser")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
             modelBuilder.Entity("WebApp.Data.Entities.TaskEntity", b =>
                 {
                     b.HasOne("WebApp.Data.Entities.TaskListEntity", "ParentList")
@@ -338,13 +362,6 @@ namespace WebApp.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApp.Data.Entities.UserEntity", b =>
-                {
-                    b.HasOne("WebApp.Data.Entities.TaskListEntity", null)
-                        .WithMany("Sharees")
-                        .HasForeignKey("TaskListEntityId");
                 });
 #pragma warning restore 612, 618
         }

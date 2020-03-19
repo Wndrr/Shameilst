@@ -9,9 +9,12 @@ namespace WebApp.Data.Services.TaskLists
     {
         public TaskListsForUserModel(UserEntity data)
         {
-            Lists = data.Lists.Select(l => new TaskListModel(l));
+            ListsOwnedByThisUser = data.Lists.Select(l => new TaskListModel(l));
+            ListsSharedWithThisUser = data.ListsSharedWithThisUser.Select(l => new SharedTaskListModel(l.List));
+            
         }
-        
-        public IEnumerable<TaskListModel> Lists { get; set; }
+
+        public IEnumerable<TaskListModel> ListsOwnedByThisUser { get; set; }
+        public IEnumerable<SharedTaskListModel> ListsSharedWithThisUser { get; set; }
     }
 }
